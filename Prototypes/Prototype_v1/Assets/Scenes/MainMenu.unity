@@ -332,6 +332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tapToStart: {fileID: 1037573329}
+  tapToRestart: {fileID: 0}
 --- !u!1 &194357509
 GameObject:
   m_ObjectHideFlags: 0

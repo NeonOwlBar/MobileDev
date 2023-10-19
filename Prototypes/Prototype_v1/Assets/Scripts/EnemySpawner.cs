@@ -18,7 +18,7 @@ public class EnemySpawner : MonoBehaviour
         spawnTimer += Time.deltaTime;
         if (spawnTimer > 3)
         {
-            Vector3 spawnPosition = new Vector3(Random.Range(-1.75f, 1.75f), 3.0f, 0.0f);
+            Vector3 spawnPosition = new Vector3(Random.Range(-1.75f, 1.75f), 5.0f, 0.0f);
             Instantiate(prefab, spawnPosition, Quaternion.identity);
             spawnTimer = 0;
         }

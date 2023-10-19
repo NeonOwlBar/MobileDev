@@ -8,14 +8,10 @@ public class MenuSceneController : MonoBehaviour
 {
     // assigns effect to text
     public TextMeshProUGUI tapToStart;
-    // value for change in alpha
-    float deltaAlpha = -0.01f;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    //public TextMeshProUGUI tapToRestart;
+    // value for change in alpha
+    float deltaAlpha = 0.0f;
 
     // Update is called once per frame
     void Update()
@@ -26,16 +22,19 @@ public class MenuSceneController : MonoBehaviour
     // Adds a fading effect to text
     void TextFade(TextMeshProUGUI text)
     {
-        // gradually adds deltaAlpha value to alpha value of text
-        tapToStart.alpha += Mathf.Sin(deltaAlpha / 3);
-        if (tapToStart.alpha >= 1.0f || tapToStart.alpha <= 0.0f)
-        {   // reverses direction of change in alpha once min or max value
-            deltaAlpha *= -1;
-        }
+        // Increase deltaAlpha every second
+        deltaAlpha += 2.0f * Time.deltaTime;
+        // Set the text alpha to new value, manipulated to always be between 0 and 1
+        tapToStart.alpha = (Mathf.Cos(deltaAlpha) + 1) / 2;
     }
 
     public void OnClickStart()
     {
         SceneManager.LoadScene("Game");
+    }
+
+    public void GameOver()
+    {
+        //TextFade(tapToRestart);
     }
 }
