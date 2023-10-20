@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerControl : Character
 {
+    public PlayerHealth playerHealth;
     // Update is called once per frame
     void Update()
     {
@@ -43,5 +44,7 @@ public class PlayerControl : Character
         if (other.tag == "Enemy")
             health -= 10;
             Destroy(other.gameObject);
+            Debug.Log("Player health = " + health);
+            playerHealth.UpdateHealth();
     }
 }
