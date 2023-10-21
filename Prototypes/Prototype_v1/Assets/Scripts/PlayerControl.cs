@@ -1,10 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerControl : Character
 {
-    public PlayerHealth playerHealth;
+    private int numHearts;
+    public GameObject[] hearts;
+
+    private SpriteRenderer spriteRenderer;
+    private Color damageColour = Color.red;
+    public float damageDuration;
+
+    public float score;
+    private int scoreToText;
+    public TextMeshProUGUI scoreText;
+
+    void Start()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        SetHealthMax(this);
+        numHearts = hearts.Length;
+        scoreText.text = "0";    // check this
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -13,10 +32,18 @@ public class PlayerControl : Character
         if (health <= 0) {
             GameOver(); // to be implemented
         }
+        // Increments score at a fixed interval
+        // mult'd by 1000 to allow a large enough increment, otherwise would not affect an int
+        score += 1000*Time.fixedDeltaTime;
+        // divided by 1000 again and converted to int
+        scoreToText = (int)(score / 1000);
+        // Displayed as part of UI
+        scoreText.text = scoreToText.ToString();
     }
 
     void GameOver()
     {
+        // removes player object from game scene
         this.gameObject.SetActive(false);
     }
 
@@ -42,9 +69,30 @@ public class PlayerControl : Character
     {
         // if colliding with object which is an enemy
         if (other.tag == "Enemy")
-            health -= 10;
             Destroy(other.gameObject);
-            Debug.Log("Player health = " + health);
-            playerHealth.UpdateHealth();
+            TakeDamage(1);
+    }
+
+    void TakeDamage(int _damage)
+    {
+        // reduces health
+        health -= _damage;
+        // reduces value for number of active hearts in array
+        numHearts -= _damage;
+        // Removes corresponding heart from game scene
+        hearts[health].gameObject.SetActive(false);
+        // Adds corresponding empty heart to scene
+        hearts[numHearts].gameObject.SetActive(true);
+        // Flashes red colour on character
+        StartCoroutine(DamageColour());
+    }
+
+    IEnumerator DamageColour()
+    {
+        spriteRenderer.color = damageColour;
+
+        yield return new WaitForSeconds(damageDuration);
+
+        spriteRenderer.color = Color.white;
     }
 }

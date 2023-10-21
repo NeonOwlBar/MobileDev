@@ -8,6 +8,7 @@ public class MenuSceneController : MonoBehaviour
 {
     // assigns effect to text
     public TextMeshProUGUI tapToStart;
+    public GameObject mainMenuUI;
 
     //public TextMeshProUGUI tapToRestart;
     // value for change in alpha
@@ -28,9 +29,15 @@ public class MenuSceneController : MonoBehaviour
         tapToStart.alpha = (Mathf.Cos(deltaAlpha) + 1) / 2;
     }
 
-    public void OnClickStart()
+    public void OnStartClicked()
     {
         SceneManager.LoadScene("Game");
+    }
+
+    public void OnSettingsClicked()
+    {
+        mainMenuUI.SetActive(false);
+        Debug.Log("Settings button clicked");
     }
 
     public void GameOver()

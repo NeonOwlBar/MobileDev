@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class EnemyBehaviour : Character
 {
+    void Start()
+    {
+        SetHealthMax(this);
+    }
     // Update is called once per frame
     void Update()
     {
