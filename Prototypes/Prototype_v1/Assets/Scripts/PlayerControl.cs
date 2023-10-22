@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class PlayerControl : Character
 {
@@ -11,26 +12,54 @@ public class PlayerControl : Character
     private SpriteRenderer spriteRenderer;
     private Color damageColour = Color.red;
     public float damageDuration;
+    public float invincibility;
+    private bool isInvincible;
 
     public float score;
     private int scoreToText;
     public TextMeshProUGUI scoreText;
 
+    public MenuSceneController menuController;
+    public int movementTypeNum;
+
+    public GameObject gameActiveUI;
+    public GameObject gameOverUI;
+
+    public enum moveType {
+        touch,
+        gyro
+    }
+    public moveType movementType;
+
     void Start()
     {
+        gameActiveUI.SetActive(true);
+        gameOverUI.SetActive(false);
+
         spriteRenderer = GetComponent<SpriteRenderer>();
         SetHealthMax(this);
         numHearts = hearts.Length;
-        scoreText.text = "0";    // check this
+        scoreText.text = "0";
+
+        movementTypeNum = PlayerPrefs.GetInt("MovementControls");
+        movementType = (moveType)movementTypeNum;
+        Debug.Log(movementTypeNum);
+
+        Input.gyro.enabled = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        PlayerMove();
+        
+        if (movementType == moveType.gyro) {
+            GyroMovement();
+        } else {
+            TouchMovement();            
+        }
 
         if (health <= 0) {
-            GameOver(); // to be implemented
+            GameOver();
         }
         // Increments score at a fixed interval
         // mult'd by 1000 to allow a large enough increment, otherwise would not affect an int
@@ -45,9 +74,19 @@ public class PlayerControl : Character
     {
         // removes player object from game scene
         this.gameObject.SetActive(false);
+        Time.timeScale = 0;
+        gameOverUI.SetActive(true);
+        gameActiveUI.SetActive(false);
+        PlayerPrefs.SetInt("Movement Controls", GetMovementType());
     }
 
-    void PlayerMove() 
+    public void GameRestart()
+    {
+        SceneManager.LoadScene("MainMenu");
+        Time.timeScale = 1;
+    }
+
+    void TouchMovement() 
     {
         // stores x position from previous frame
         float oldPosX = transform.position.x;
@@ -65,10 +104,20 @@ public class PlayerControl : Character
         //    transform.Translate(movement, 0, 0);
     }
 
+    private void GyroMovement()
+    {
+        transform.Translate(Input.acceleration.x * 0.05f, 0, 0);
+    }
+
+    public int GetMovementType()
+    {
+        return (int)movementType;
+    } 
+
     void OnTriggerEnter2D(Collider2D other)
     {
         // if colliding with object which is an enemy
-        if (other.tag == "Enemy")
+        if (other.tag == "Enemy")// && isInvincible == false)
             Destroy(other.gameObject);
             TakeDamage(1);
     }
@@ -84,7 +133,17 @@ public class PlayerControl : Character
         // Adds corresponding empty heart to scene
         hearts[numHearts].gameObject.SetActive(true);
         // Flashes red colour on character
+        //StartCoroutine(InvincibilityFrames());
         StartCoroutine(DamageColour());
+    }
+
+    IEnumerator InvincibilityFrames()
+    {
+        isInvincible = true;
+
+        yield return new WaitForSeconds(invincibility);
+
+        isInvincible = false;
     }
 
     IEnumerator DamageColour()
