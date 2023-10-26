@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - MainMenuUI
+  - ScreenBounds
   layers:
   - Default
   - TransparentFX

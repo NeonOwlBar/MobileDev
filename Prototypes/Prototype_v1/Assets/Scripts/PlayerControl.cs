@@ -11,8 +11,8 @@ public class PlayerControl : Character
 
     private SpriteRenderer spriteRenderer;
     private Color damageColour = Color.red;
-    public float damageDuration;
-    public float invincibility;
+    public float damageColourDuration;
+    public float invincibilityDuration;
     private bool isInvincible;
 
     public float score;
@@ -20,7 +20,8 @@ public class PlayerControl : Character
     public TextMeshProUGUI scoreText;
 
     public MenuSceneController menuController;
-    public int movementTypeNum;
+    private int movementTypeNum;
+    private float gyroSensitivity = 0.05f;
 
     public GameObject gameActiveUI;
     public GameObject gameOverUI;
@@ -51,11 +52,17 @@ public class PlayerControl : Character
     // Update is called once per frame
     void Update()
     {
-        
-        if (movementType == moveType.gyro) {
-            GyroMovement();
-        } else {
-            TouchMovement();            
+        switch (movementType)
+        {
+            case moveType.touch:
+                TouchMovement();
+                break;
+            case moveType.gyro:
+                GyroMovement(); 
+                break;
+            default:
+                TouchMovement();
+                break;
         }
 
         if (health <= 0) {
@@ -77,6 +84,7 @@ public class PlayerControl : Character
         Time.timeScale = 0;
         gameOverUI.SetActive(true);
         gameActiveUI.SetActive(false);
+        // In case movement type was changed during gameplay in editor
         PlayerPrefs.SetInt("Movement Controls", GetMovementType());
     }
 
@@ -106,7 +114,7 @@ public class PlayerControl : Character
 
     private void GyroMovement()
     {
-        transform.Translate(Input.acceleration.x * 0.05f, 0, 0);
+        transform.Translate(Input.acceleration.x * gyroSensitivity, 0, 0);
     }
 
     public int GetMovementType()
@@ -116,10 +124,17 @@ public class PlayerControl : Character
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log("Is invincible in collider? " + isInvincible);
+        // returns early if invincible
+        if (isInvincible) return;
+
         // if colliding with object which is an enemy
-        if (other.tag == "Enemy")// && isInvincible == false)
-            Destroy(other.gameObject);
+        if (other.CompareTag("Enemy"))
+        {
+            //Destroy(other.gameObject);
             TakeDamage(1);
+            StartCoroutine(InvincibilityFrames());
+        }
     }
 
     void TakeDamage(int _damage)
@@ -132,25 +147,26 @@ public class PlayerControl : Character
         hearts[health].gameObject.SetActive(false);
         // Adds corresponding empty heart to scene
         hearts[numHearts].gameObject.SetActive(true);
+        
+        
         // Flashes red colour on character
-        //StartCoroutine(InvincibilityFrames());
         StartCoroutine(DamageColour());
     }
 
-    IEnumerator InvincibilityFrames()
+    private IEnumerator InvincibilityFrames()
     {
         isInvincible = true;
 
-        yield return new WaitForSeconds(invincibility);
+        yield return new WaitForSeconds(invincibilityDuration);
 
         isInvincible = false;
     }
 
-    IEnumerator DamageColour()
+    private IEnumerator DamageColour()
     {
         spriteRenderer.color = damageColour;
 
-        yield return new WaitForSeconds(damageDuration);
+        yield return new WaitForSeconds(damageColourDuration);
 
         spriteRenderer.color = Color.white;
     }
