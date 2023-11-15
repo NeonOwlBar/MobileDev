@@ -9,6 +9,7 @@ public class MenuSceneController : MonoBehaviour
 {
     // assigns effect to text
     public TextMeshProUGUI tapToStart;
+    public TextMeshProUGUI tapToRestart;
     public GameObject mainMenuUI;
 
     public GameObject optionsMenuUI;
@@ -24,7 +25,6 @@ public class MenuSceneController : MonoBehaviour
 
     public controlSelection controlType;
 
-    //public TextMeshProUGUI tapToRestart;
     // value for change in alpha
     float deltaAlpha = 0.0f;
 
@@ -58,7 +58,7 @@ public class MenuSceneController : MonoBehaviour
         // Increase deltaAlpha every second
         deltaAlpha += 2.0f * Time.unscaledDeltaTime;
         // Set the text alpha to new value, manipulated to always be between 0 and 1
-        tapToStart.alpha = (Mathf.Cos(deltaAlpha) + 1) / 2;
+        text.alpha = (Mathf.Cos(deltaAlpha) + 1) / 2;
     }
 
     public void OnStartClicked()

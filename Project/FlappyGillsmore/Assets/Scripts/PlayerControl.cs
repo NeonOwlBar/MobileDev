@@ -18,6 +18,7 @@ public class PlayerControl : Character
     public float score;
     private int scoreToText;
     public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI scoreEndText;
 
     public MenuSceneController menuController;
     private int movementTypeNum;
@@ -25,6 +26,7 @@ public class PlayerControl : Character
 
     public GameObject gameActiveUI;
     public GameObject gameOverUI;
+    public GameObject highScoreText;
 
     public enum moveType {
         touch,
@@ -44,7 +46,7 @@ public class PlayerControl : Character
 
         movementTypeNum = PlayerPrefs.GetInt("MovementControls");
         movementType = (moveType)movementTypeNum;
-        Debug.Log(movementTypeNum);
+        Debug.Log("Movement Type Number: " + movementTypeNum);
 
         Input.gyro.enabled = true;
     }
@@ -82,10 +84,26 @@ public class PlayerControl : Character
         // removes player object from game scene
         this.gameObject.SetActive(false);
         Time.timeScale = 0;
+
+        //menuController.GameOver();
+
+        scoreEndText.text = scoreToText.ToString();
+
         gameOverUI.SetActive(true);
         gameActiveUI.SetActive(false);
         // In case movement type was changed during gameplay in editor
-        PlayerPrefs.SetInt("Movement Controls", GetMovementType());
+        PlayerPrefs.SetInt("MovementControls", GetMovementType());
+
+        if (scoreToText > PlayerPrefs.GetInt("HighScore"))
+        {
+            PlayerPrefs.SetInt("HighScore", scoreToText);
+        } else
+        {
+            highScoreText.SetActive(false);
+        }
+
+        Debug.Log(PlayerPrefs.GetInt("HighScore"));
+        Debug.Log(scoreToText);
     }
 
     public void GameRestart()
@@ -114,7 +132,17 @@ public class PlayerControl : Character
 
     private void GyroMovement()
     {
-        transform.Translate(Input.acceleration.x * gyroSensitivity, 0, 0);
+        //transform.Translate(Input.acceleration.x * gyroSensitivity, 0, 0);
+
+        // stores x position from previous frame
+        float oldPosX = transform.position.x;
+        // calculate change in position
+        float movement = Input.acceleration.x * gyroSensitivity;// * Time.deltaTime;
+        // stores x position after movement
+        float newX = oldPosX + movement;
+        // only applies movement if the new position is within the bounds
+        if (newX > -2.0f && newX < 2.0f)
+            transform.Translate(movement, 0, 0);
     }
 
     public int GetMovementType()
