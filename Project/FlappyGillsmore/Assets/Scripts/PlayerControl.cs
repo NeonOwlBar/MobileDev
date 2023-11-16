@@ -102,6 +102,7 @@ public class PlayerControl : Character
             highScoreText.SetActive(false);
         }
 
+        PlayerPrefs.Save();
         Debug.Log(PlayerPrefs.GetInt("HighScore"));
         Debug.Log(scoreToText);
     }
