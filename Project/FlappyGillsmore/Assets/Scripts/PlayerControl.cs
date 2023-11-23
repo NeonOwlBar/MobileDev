@@ -3,30 +3,41 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Cinemachine;
 
 public class PlayerControl : Character
 {
-    private int numHearts;
+    [Header ("Hearts Information")]
     public GameObject[] hearts;
+    private int numHearts;
 
-    private SpriteRenderer spriteRenderer;
-    private Color damageColour = Color.red;
-    public float damageColourDuration;
+    [Header ("Player Damage")]
+    public float damageDuration;
     public float invincibilityDuration;
     private bool isInvincible;
+    private SpriteRenderer spriteRenderer;
+    private Color damageColour = Color.red;
 
+    [Header ("Score")]
     public float score;
-    private int scoreToText;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI scoreEndText;
+    private int scoreToText;
 
+    [Header ("Menu Controller")]
     public MenuSceneController menuController;
     private int movementTypeNum;
     private float gyroSensitivity = 0.05f;
 
+    [Header ("UI Game Objects")]
     public GameObject gameActiveUI;
     public GameObject gameOverUI;
     public GameObject highScoreText;
+
+    [Header ("Cinemachine")]
+    public CinemachineVirtualCamera virtualCam;
+    public float camShakeIntensity = 1.0f;
+    private CinemachineBasicMultiChannelPerlin perlinNoise;
 
     public enum moveType {
         touch,
@@ -49,6 +60,13 @@ public class PlayerControl : Character
         Debug.Log("Movement Type Number: " + movementTypeNum);
 
         Input.gyro.enabled = true;
+
+        perlinNoise = virtualCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+
+        // resetting values that could have been changed or not reset in previous sessions
+        ResetInvincibility();
+        ResetPlayerColour();
+        ResetShakeIntensity();
     }
 
     // Update is called once per frame
@@ -162,7 +180,6 @@ public class PlayerControl : Character
         {
             //Destroy(other.gameObject);
             TakeDamage(1);
-            StartCoroutine(InvincibilityFrames());
         }
     }
 
@@ -176,10 +193,12 @@ public class PlayerControl : Character
         hearts[health].gameObject.SetActive(false);
         // Adds corresponding empty heart to scene
         hearts[numHearts].gameObject.SetActive(true);
-        
-        
+        // Player will not take damage while coroutine is running
+        StartCoroutine(InvincibilityFrames());
         // Flashes red colour on character
         StartCoroutine(DamageColour());
+        // creates camera shake on damage taken
+        StartCoroutine(CameraShake(camShakeIntensity));
     }
 
     private IEnumerator InvincibilityFrames()
@@ -188,6 +207,10 @@ public class PlayerControl : Character
 
         yield return new WaitForSeconds(invincibilityDuration);
 
+        ResetInvincibility();
+    }
+    private void ResetInvincibility()
+    {
         isInvincible = false;
     }
 
@@ -195,8 +218,25 @@ public class PlayerControl : Character
     {
         spriteRenderer.color = damageColour;
 
-        yield return new WaitForSeconds(damageColourDuration);
+        yield return new WaitForSeconds(damageDuration);
 
+        ResetPlayerColour();
+    }
+    private void ResetPlayerColour()
+    {
         spriteRenderer.color = Color.white;
+    }
+
+    private IEnumerator CameraShake(float intensity)
+    {
+        perlinNoise.m_AmplitudeGain = intensity;
+
+        yield return new WaitForSeconds(damageDuration);
+
+        ResetShakeIntensity();
+    }
+    private void ResetShakeIntensity()
+    {
+        perlinNoise.m_AmplitudeGain = 0.0f;
     }
 }
