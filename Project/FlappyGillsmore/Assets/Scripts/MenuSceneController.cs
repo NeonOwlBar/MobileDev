@@ -25,9 +25,6 @@ public class MenuSceneController : MonoBehaviour
 
     public controlSelection controlType;
 
-    // value for change in alpha
-    float deltaAlpha = 0.0f;
-
     void Start()
     {
         if (PlayerPrefs.HasKey("MovementControls")) {
@@ -55,10 +52,9 @@ public class MenuSceneController : MonoBehaviour
     // Adds a fading effect to text
     public void TextFade(TextMeshProUGUI text)
     {
-        // Increase deltaAlpha every second
-        deltaAlpha += 2.0f * Time.unscaledDeltaTime;
-        // Set the text alpha to new value, manipulated to always be between 0 and 1
-        text.alpha = (Mathf.Cos(deltaAlpha) + 1) / 2;
+        // Set the text alpha to new value
+        // PingPong sets value between 0 and the value in the second parameter
+        text.alpha = 0.1f + Mathf.PingPong(Time.time / 1.5f, 0.9f);   // alpha between 0.1 and 1
     }
 
     public void OnStartClicked()

@@ -355,7 +355,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f9674ce6b8bb6b498e7360d50cb37a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnTimer: 1.5
+  spawnTimer: 1
   prefab: {fileID: 8775697396664854409, guid: 734a3560e51a3ea4b96210a772251888, type: 3}
 --- !u!4 &43825203
 Transform:
@@ -761,7 +761,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0008544922, y: -0.0052490234}
+  m_AnchoredPosition: {x: 0.0008544922, y: -0.005126953}
   m_SizeDelta: {x: -0.4699707, y: 0.39990234}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &431606705
@@ -1048,7 +1048,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 104.00003, y: -204}
+  m_AnchoredPosition: {x: 104, y: -204}
   m_SizeDelta: {x: 128, y: 112}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &614397128
@@ -1259,7 +1259,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.184021, y: 0.37963867}
+  m_AnchoredPosition: {x: -0.18408203, y: 0.37963867}
   m_SizeDelta: {x: -1.3000488, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &772253992
@@ -1406,7 +1406,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00030517578, y: 0.0030517578}
+  m_AnchoredPosition: {x: 0.00024414062, y: 0.0031738281}
   m_SizeDelta: {x: -0.74329, y: -1.5615}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1069208189
@@ -2132,6 +2132,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1973346066}
     - target: {fileID: 155353065615578699, guid: b83e90d286863fc42adcff3f9ca60e95, type: 3}
+      propertyPath: redOverlay
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 155353065615578699, guid: b83e90d286863fc42adcff3f9ca60e95, type: 3}
       propertyPath: gameActiveUI
       value: 
       objectReference: {fileID: 772134987}
@@ -2159,6 +2163,10 @@ PrefabInstance:
       propertyPath: menuController
       value: 
       objectReference: {fileID: 519420033}
+    - target: {fileID: 155353065615578699, guid: b83e90d286863fc42adcff3f9ca60e95, type: 3}
+      propertyPath: BackgroundImage
+      value: 
+      objectReference: {fileID: 1069208187}
     - target: {fileID: 155353065615578699, guid: b83e90d286863fc42adcff3f9ca60e95, type: 3}
       propertyPath: damageColourDuration
       value: 0.15
