@@ -7,6 +7,9 @@ using Cinemachine;
 
 public class PlayerControl : Character
 {
+    [Header("General")]
+    private Rigidbody2D rb;
+
     [Header ("Hearts Information")]
     public GameObject[] hearts;
     private int numHearts;
@@ -47,6 +50,8 @@ public class PlayerControl : Character
 
     void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
+
         gameActiveUI.SetActive(true);
         gameOverUI.SetActive(false);
 
@@ -136,14 +141,29 @@ public class PlayerControl : Character
         // stores x position from previous frame
         float oldPosX = transform.position.x;
         // true if touch input currently detected, false if not
-        bool isTouch = (Input.touchCount > 0) ? true : false;
+        bool isTouch = Input.touchCount > 0;
         // if touch: move right, else move left
         float movement = (isTouch ? 1 : -1) * speed * Time.deltaTime;
         // stores x position after movement
         float newX = oldPosX + movement;
+        
         // only applies movement if the new position is within the bounds
         if (newX > -2.0f && newX < 2.0f)
-            transform.Translate(movement, 0, 0);
+        {
+            // new velocity vector
+            Vector2 velocity = new Vector2(movement, 0);
+            // convert to unit vector
+            velocity.Normalize();
+            // scale to speed
+            velocity *= speed;
+            // assign value to velocity of rb
+            rb.velocity = velocity;
+        }
+        else
+        {
+            // movement would put player beyond screen bound, so don't apply movement
+            rb.velocity = Vector2.zero;
+        }
         
         //if (newX > safeArea.x && newX < safeArea.width)
         //    transform.Translate(movement, 0, 0);

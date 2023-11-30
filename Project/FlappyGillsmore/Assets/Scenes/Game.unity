@@ -356,6 +356,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnTimer: 1
+  spawnMin: 0.8
+  spawnMax: 2.5
   prefab: {fileID: 8775697396664854409, guid: 734a3560e51a3ea4b96210a772251888, type: 3}
 --- !u!4 &43825203
 Transform:
