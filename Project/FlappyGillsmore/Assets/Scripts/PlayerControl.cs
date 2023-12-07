@@ -9,6 +9,7 @@ public class PlayerControl : Character
 {
     [Header("General")]
     private Rigidbody2D rb;
+    private bool isTouch;
 
     [Header ("Hearts Information")]
     public GameObject[] hearts;
@@ -80,24 +81,27 @@ public class PlayerControl : Character
         switch (movementType)
         {
             case moveType.touch:
-                TouchMovement();
+                TouchMovement(isTouch);
                 break;
             case moveType.gyro:
                 GyroMovement(); 
                 break;
             default:
-                TouchMovement();
+                TouchMovement(isTouch);
                 break;
         }
+
+        SetTouchFalse();
 
         if (health <= 0) {
             GameOver();
         }
         // Increments score at a fixed interval
         // mult'd by 1000 to allow a large enough increment, otherwise would not affect an int
-        score += 1000*Time.fixedDeltaTime;
+        score += 1000*Time.deltaTime;
         // divided by 1000 again and converted to int
-        scoreToText = (int)(score / 1000);
+        //scoreToText = (int)(score / 1000);
+        scoreToText = (int)(score / 100);
         // Displayed as part of UI
         scoreText.text = scoreToText.ToString();
     }
@@ -136,14 +140,26 @@ public class PlayerControl : Character
         Time.timeScale = 1;
     }
 
-    void TouchMovement() 
+    private void SetTouchTrue()
+    {
+        isTouch = true;
+    }
+    private void SetTouchFalse()
+    {
+        isTouch = false;
+    }
+
+    void TouchMovement(bool input) 
     {
         // stores x position from previous frame
         float oldPosX = transform.position.x;
-        // true if touch input currently detected, false if not
-        bool isTouch = Input.touchCount > 0;
+        //// true if touch input currently detected, false if not
+        //bool isTouch = Input.touchCount > 0;
         // if touch: move right, else move left
-        float movement = (isTouch ? 1 : -1) * speed * Time.deltaTime;
+        //float movement = (isTouch ? 1 : -1) * speed * Time.deltaTime;
+
+        float movement = (input ? 1 : -1) * speed * Time.deltaTime;
+
         // stores x position after movement
         float newX = oldPosX + movement;
         
