@@ -7,105 +7,31 @@ using UnityEngine.UI;
 
 public class MenuSceneController : MonoBehaviour
 {
-    // assigns effect to text
-    public TextMeshProUGUI tapToStart;
-    public TextMeshProUGUI tapToRestart;
-    public GameObject mainMenuUI;
+    // value for change in text alpha
+    static float deltaAlpha = 0.0f;
 
-    public GameObject optionsMenuUI;
-    public TextMeshProUGUI toggleControlsText;
-    public Button toggleImage;
-    public Sprite toggleOrange;
-    public Sprite toggleBlue;
-
-    public enum controlSelection {
+    public enum ControlSelection
+    {
         Touch,
         Gyroscope
     }
 
-    public controlSelection controlType;
-
-    void Start()
-    {
-        if (PlayerPrefs.HasKey("MovementControls")) {
-            controlType = (controlSelection)PlayerPrefs.GetInt("MovementControls");
-        }
-        switch (controlType){
-            case controlSelection.Touch:
-                ControlsToTouch();
-                break;
-            case controlSelection.Gyroscope:
-                ControlsToGyro();
-                break;
-        }
-    
-        mainMenuUI.SetActive(true);
-        optionsMenuUI.SetActive(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        TextFade(tapToStart);
-    }
+    public static ControlSelection controlType;
 
     // Adds a fading effect to text
-    public void TextFade(TextMeshProUGUI text)
+    public static void TextFade(TextMeshProUGUI text)
     {
-        // Set the text alpha to new value
-        // PingPong sets value between 0 and the value in the second parameter
-        text.alpha = 0.1f + Mathf.PingPong(Time.time / 1.5f, 0.9f);   // alpha between 0.1 and 1
+        // Increase deltaAlpha every second, even when time scale is zero (game logic paused)
+        deltaAlpha += 2.0f * Time.unscaledDeltaTime;
+        // Set the text alpha to new value, manipulated to always be between 0 and 1
+        text.alpha = (Mathf.Cos(deltaAlpha) + 1) / 2;
     }
 
-    public void OnStartClicked()
-    {
-        SceneManager.LoadScene("Game");
-    }
+    
 
-    public void OnSettingsClicked()
-    {
-        mainMenuUI.SetActive(false);
-        optionsMenuUI.SetActive(true);
-    }
-
-    public void OnBackClicked() 
-    {
-        mainMenuUI.SetActive(true);
-        optionsMenuUI.SetActive(false);
-    }
-
-    public void OnControlToggleClicked()
-    {
-        // checks current status of controls, switches to other type
-        switch (controlType){
-            case controlSelection.Touch:
-                ControlsToGyro();
-                break;
-            case controlSelection.Gyroscope:
-                ControlsToTouch();
-                break;
-        }
-        PlayerPrefs.SetInt("MovementControls", GetControlType());
-        PlayerPrefs.Save();
-    }
-
-    public int GetControlType()
+    public static int GetControlType()
     {
         return (int)controlType;
-    }
-
-    private void ControlsToGyro()
-    {
-        toggleControlsText.text = "Gyroscope";
-        toggleImage.image.sprite = toggleBlue;
-        controlType = controlSelection.Gyroscope;
-    }
-
-    private void ControlsToTouch()
-    {
-        toggleControlsText.text = "Touch";
-        toggleImage.image.sprite = toggleOrange;
-        controlType = controlSelection.Touch;
     }
 
     public void GameOver()
