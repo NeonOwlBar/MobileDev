@@ -4,18 +4,21 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using Cinemachine;
+using FMODUnity;
 
 public class PlayerControl : Character
 {
     [Header("General")]
     private Rigidbody2D rb;
     private bool isTouch;
+    public bool canMove;
 
     [Header ("Hearts Information")]
     public GameObject[] hearts;
     private int numHearts;
 
     [Header ("Player Damage")]
+    [SerializeField] private EventReference damageSound;
     public float damageDuration;
     public float invincibilityDuration;
     private bool isInvincible;
@@ -66,6 +69,7 @@ public class PlayerControl : Character
         Debug.Log("Movement Type Number: " + movementTypeNum);
 
         Input.gyro.enabled = true;
+        canMove = true;
 
         perlinNoise = virtualCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
 
@@ -78,26 +82,34 @@ public class PlayerControl : Character
     // Update is called once per frame
     void Update()
     {
+        if (!canMove) return;
+
+        isTouch = Input.touchCount > 0;
+
         switch (movementType)
         {
             case moveType.touch:
+                //TouchMovement();
                 TouchMovement(isTouch);
                 break;
             case moveType.gyro:
                 GyroMovement(); 
                 break;
             default:
+                //TouchMovement();
                 TouchMovement(isTouch);
                 break;
         }
 
-        SetTouchFalse();
+        //SetTouchFalse();
 
         if (health <= 0) {
+            ResetShakeIntensity();
             GameOver();
         }
         // Increments score at a fixed interval
         // mult'd by 1000 to allow a large enough increment, otherwise would not affect an int
+        //score += 1000 * Time.fixedDeltaTime;
         score += 1000*Time.deltaTime;
         // divided by 1000 again and converted to int
         //scoreToText = (int)(score / 1000);
@@ -108,9 +120,11 @@ public class PlayerControl : Character
 
     void GameOver()
     {
+        //WorldStates.GameOver();
         // removes player object from game scene
-        this.gameObject.SetActive(false);
-        Time.timeScale = 0;
+        gameObject.SetActive(false);
+        //Time.timeScale = 0;
+
 
         //menuController.GameOver();
 
@@ -140,20 +154,21 @@ public class PlayerControl : Character
         Time.timeScale = 1;
     }
 
-    private void SetTouchTrue()
-    {
-        isTouch = true;
-    }
-    private void SetTouchFalse()
-    {
-        isTouch = false;
-    }
+    //private void SetTouchTrue()
+    //{
+    //    isTouch = true;
+    //}
+    //private void SetTouchFalse()
+    //{
+    //    isTouch = false;
+    //}
 
-    void TouchMovement(bool input) 
+    //void TouchMovement()
+    void TouchMovement(bool input)
     {
         // stores x position from previous frame
         float oldPosX = transform.position.x;
-        //// true if touch input currently detected, false if not
+        // true if touch input currently detected, false if not
         //bool isTouch = Input.touchCount > 0;
         // if touch: move right, else move left
         //float movement = (isTouch ? 1 : -1) * speed * Time.deltaTime;
@@ -187,8 +202,6 @@ public class PlayerControl : Character
 
     private void GyroMovement()
     {
-        //transform.Translate(Input.acceleration.x * gyroSensitivity, 0, 0);
-
         // stores x position from previous frame
         float oldPosX = transform.position.x;
         // calculate change in position
@@ -208,19 +221,18 @@ public class PlayerControl : Character
     void OnTriggerEnter2D(Collider2D other)
     {
         Debug.Log("Is invincible in collider? " + isInvincible);
-        // returns early if invincible
-        if (isInvincible) return;
 
-        // if colliding with object which is an enemy
-        if (other.CompareTag("Enemy"))
+        // if CAN take damage && colliding with an enemy
+        if (!isInvincible && other.CompareTag("Enemy"))
         {
-            //Destroy(other.gameObject);
             TakeDamage(1);
         }
     }
 
     void TakeDamage(int _damage)
     {
+        // make damage sound
+        AudioManager.Instance.PlayOneShot(damageSound, transform.position);
         // reduces health
         health -= _damage;
         // reduces value for number of active hearts in array

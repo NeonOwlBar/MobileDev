@@ -6,6 +6,7 @@ using UnityEngine;
 public class EnemyBehaviour : Character
 {
     Rigidbody2D rb;
+    public bool canMove = true;
 
     void Start()
     {
@@ -22,14 +23,20 @@ public class EnemyBehaviour : Character
 
     private void LateUpdate()
     {
-        EnemyMove();
+        if (canMove)
+        {
+            EnemyMove();
+        }
     }
 
     void EnemyMove()
     {
         rb.velocity = -Vector2.up * speed;
         //transform.Translate(0, -(speed * Time.deltaTime), 0);
-        if (rb.position.y < -6.0f)
+        if (rb.position.y < -7.0f)
+        {
+            WorldStates.enemies.Remove(this);
             Destroy(gameObject);
+        }
     }
 }
