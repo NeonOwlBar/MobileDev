@@ -3,9 +3,8 @@
 This repository contains commits related to my work in the Mobile Game Development module.
 
 ## References
-* Cinemachine
-  * Accessing fields - https://docs.unity3d.com/Packages/com.unity.cinemachine@2.1/api/Cinemachine.CinemachineBasicMultiChannelPerlin.html
-  * Camera shake - https://www.youtube.com/watch?v=JGTgLvh_DH4
+* Audio
+  * Peter Gresser (2013) 'Skipping in the No Standing Zone'. Peter Gresser. In: _Reimagine: The Game_ [electronic download] Free Music Archive. Available through: https://www.chosic.com/free-music/all/ [Accessed 21/01/2024]. 
 
 ## Contact Information
 * rowan.noble@mail.bcu.ac.uk
