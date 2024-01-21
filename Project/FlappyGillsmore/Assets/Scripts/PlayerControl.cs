@@ -78,31 +78,26 @@ public class PlayerControl : Character
     // Update is called once per frame
     void Update()
     {
-        isTouch = Input.touchCount > 0;
-
         switch (movementType)
         {
             case moveType.touch:
-                //TouchMovement();
                 TouchMovement(isTouch);
                 break;
             case moveType.gyro:
                 GyroMovement(); 
                 break;
             default:
-                //TouchMovement();
                 TouchMovement(isTouch);
                 break;
         }
 
-        //SetTouchFalse();
+        SetTouchFalse();
 
         if (health <= 0) {
             GameOver();
         }
         // Increments score at a fixed interval
         // mult'd by 1000 to allow a large enough increment, otherwise would not affect an int
-        //score += 1000 * Time.fixedDeltaTime;
         score += 1000*Time.deltaTime;
         // divided by 1000 again and converted to int
         //scoreToText = (int)(score / 1000);
@@ -114,7 +109,7 @@ public class PlayerControl : Character
     void GameOver()
     {
         // removes player object from game scene
-        gameObject.SetActive(false);
+        this.gameObject.SetActive(false);
         Time.timeScale = 0;
 
         //menuController.GameOver();
@@ -145,21 +140,20 @@ public class PlayerControl : Character
         Time.timeScale = 1;
     }
 
-    //private void SetTouchTrue()
-    //{
-    //    isTouch = true;
-    //}
-    //private void SetTouchFalse()
-    //{
-    //    isTouch = false;
-    //}
+    private void SetTouchTrue()
+    {
+        isTouch = true;
+    }
+    private void SetTouchFalse()
+    {
+        isTouch = false;
+    }
 
-    //void TouchMovement()
-    void TouchMovement(bool input)
+    void TouchMovement(bool input) 
     {
         // stores x position from previous frame
         float oldPosX = transform.position.x;
-        // true if touch input currently detected, false if not
+        //// true if touch input currently detected, false if not
         //bool isTouch = Input.touchCount > 0;
         // if touch: move right, else move left
         //float movement = (isTouch ? 1 : -1) * speed * Time.deltaTime;

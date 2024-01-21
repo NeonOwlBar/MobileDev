@@ -7,31 +7,105 @@ using UnityEngine.UI;
 
 public class MenuSceneController : MonoBehaviour
 {
-    // value for change in text alpha
-    static float deltaAlpha = 0.0f;
+    // assigns effect to text
+    public TextMeshProUGUI tapToStart;
+    public TextMeshProUGUI tapToRestart;
+    public GameObject mainMenuUI;
 
-    public enum ControlSelection
-    {
+    public GameObject optionsMenuUI;
+    public TextMeshProUGUI toggleControlsText;
+    public Button toggleImage;
+    public Sprite toggleOrange;
+    public Sprite toggleBlue;
+
+    public enum controlSelection {
         Touch,
         Gyroscope
     }
 
-    public static ControlSelection controlType;
+    public controlSelection controlType;
 
-    // Adds a fading effect to text
-    public static void TextFade(TextMeshProUGUI text)
+    void Start()
     {
-        // Increase deltaAlpha every second, even when time scale is zero (game logic paused)
-        deltaAlpha += 2.0f * Time.unscaledDeltaTime;
-        // Set the text alpha to new value, manipulated to always be between 0 and 1
-        text.alpha = (Mathf.Cos(deltaAlpha) + 1) / 2;
+        if (PlayerPrefs.HasKey("MovementControls")) {
+            controlType = (controlSelection)PlayerPrefs.GetInt("MovementControls");
+        }
+        switch (controlType){
+            case controlSelection.Touch:
+                ControlsToTouch();
+                break;
+            case controlSelection.Gyroscope:
+                ControlsToGyro();
+                break;
+        }
+    
+        mainMenuUI.SetActive(true);
+        optionsMenuUI.SetActive(false);
     }
 
-    
+    // Update is called once per frame
+    void Update()
+    {
+        TextFade(tapToStart);
+    }
 
-    public static int GetControlType()
+    // Adds a fading effect to text
+    public void TextFade(TextMeshProUGUI text)
+    {
+        // Set the text alpha to new value
+        // PingPong sets value between 0 and the value in the second parameter
+        text.alpha = 0.1f + Mathf.PingPong(Time.time / 1.5f, 0.9f);   // alpha between 0.1 and 1
+    }
+
+    public void OnStartClicked()
+    {
+        SceneManager.LoadScene("Game");
+    }
+
+    public void OnSettingsClicked()
+    {
+        mainMenuUI.SetActive(false);
+        optionsMenuUI.SetActive(true);
+    }
+
+    public void OnBackClicked() 
+    {
+        mainMenuUI.SetActive(true);
+        optionsMenuUI.SetActive(false);
+    }
+
+    public void OnControlToggleClicked()
+    {
+        // checks current status of controls, switches to other type
+        switch (controlType){
+            case controlSelection.Touch:
+                ControlsToGyro();
+                break;
+            case controlSelection.Gyroscope:
+                ControlsToTouch();
+                break;
+        }
+        PlayerPrefs.SetInt("MovementControls", GetControlType());
+        PlayerPrefs.Save();
+    }
+
+    public int GetControlType()
     {
         return (int)controlType;
+    }
+
+    private void ControlsToGyro()
+    {
+        toggleControlsText.text = "Gyroscope";
+        toggleImage.image.sprite = toggleBlue;
+        controlType = controlSelection.Gyroscope;
+    }
+
+    private void ControlsToTouch()
+    {
+        toggleControlsText.text = "Touch";
+        toggleImage.image.sprite = toggleOrange;
+        controlType = controlSelection.Touch;
     }
 
     public void GameOver()

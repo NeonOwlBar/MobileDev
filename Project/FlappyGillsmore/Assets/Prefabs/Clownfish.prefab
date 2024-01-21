@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 155353065615578699}
   - component: {fileID: 5934551355681267479}
   - component: {fileID: 2369209531072217228}
+  - component: {fileID: 5418264857601967288}
   m_Layer: 0
   m_Name: Clownfish
   m_TagString: Player
@@ -33,7 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3884132502209965174
 SpriteRenderer:
@@ -110,17 +111,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   damageDuration: 0.1
-  invincibilityDuration: 0
-  score: 0
-  scoreText: {fileID: 0}
-  scoreEndText: {fileID: 0}
-  menuController: {fileID: 0}
-  gameActiveUI: {fileID: 0}
-  gameOverUI: {fileID: 0}
-  highScoreText: {fileID: 0}
-  virtualCam: {fileID: 0}
-  camShakeIntensity: 1
-  movementType: 0
 --- !u!50 &5934551355681267479
 Rigidbody2D:
   serializedVersion: 4
@@ -193,3 +183,38 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.8220482, y: 2.462906}
   m_EdgeRadius: 0
+--- !u!58 &5418264857601967288
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2684091539021980240}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 1.01}
+  serializedVersion: 2
+  m_Radius: 1.3
