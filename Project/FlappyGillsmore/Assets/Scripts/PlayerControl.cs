@@ -32,12 +32,12 @@ public class PlayerControl : Character
     private int scoreToText;
 
     [Header ("Menu Controller")]
-    public MenuSceneController menuController;
     private int movementTypeNum;
     private float gyroSensitivity = 0.05f;
 
     [Header ("UI Game Objects")]
     public GameObject gameActiveUI;
+    public GameObject pauseUI;
     public GameObject gameOverUI;
     public GameObject highScoreText;
 
@@ -46,17 +46,19 @@ public class PlayerControl : Character
     public float camShakeIntensity = 1.0f;
     private CinemachineBasicMultiChannelPerlin perlinNoise;
 
-    public enum moveType {
+    public enum MoveType
+    {
         touch,
         gyro
     }
-    public moveType movementType;
+    public MoveType movementType;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
 
         gameActiveUI.SetActive(true);
+        pauseUI.SetActive(true);
         gameOverUI.SetActive(false);
 
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -65,7 +67,7 @@ public class PlayerControl : Character
         scoreText.text = "0";
 
         movementTypeNum = PlayerPrefs.GetInt("MovementControls");
-        movementType = (moveType)movementTypeNum;
+        movementType = (MoveType)movementTypeNum;
         Debug.Log("Movement Type Number: " + movementTypeNum);
 
         Input.gyro.enabled = true;
@@ -88,11 +90,11 @@ public class PlayerControl : Character
 
         switch (movementType)
         {
-            case moveType.touch:
+            case MoveType.touch:
                 //TouchMovement();
                 TouchMovement(isTouch);
                 break;
-            case moveType.gyro:
+            case MoveType.gyro:
                 GyroMovement(); 
                 break;
             default:
@@ -103,7 +105,8 @@ public class PlayerControl : Character
 
         //SetTouchFalse();
 
-        if (health <= 0) {
+        if (health <= 0)
+        {
             ResetShakeIntensity();
             GameOver();
         }
@@ -125,20 +128,20 @@ public class PlayerControl : Character
         gameObject.SetActive(false);
         //Time.timeScale = 0;
 
-
-        //menuController.GameOver();
-
         scoreEndText.text = scoreToText.ToString();
 
         gameOverUI.SetActive(true);
         gameActiveUI.SetActive(false);
+        pauseUI.SetActive(false);
+
         // In case movement type was changed during gameplay in editor
         PlayerPrefs.SetInt("MovementControls", GetMovementType());
 
         if (scoreToText > PlayerPrefs.GetInt("HighScore"))
         {
             PlayerPrefs.SetInt("HighScore", scoreToText);
-        } else
+        }
+        else
         {
             highScoreText.SetActive(false);
         }

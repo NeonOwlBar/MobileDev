@@ -2655,6 +2655,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1973346067}
+  - component: {fileID: 1973346068}
   m_Layer: 0
   m_Name: GameOverUI
   m_TagString: Untagged
@@ -2681,6 +2682,20 @@ Transform:
   m_Father: {fileID: 233746379}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1973346068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1973346066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b62279fe8f23c3c4bbcf45cb79f1563f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameOverUI: {fileID: 1973346066}
+  restartText: {fileID: 2110305388}
 --- !u!1 &2110305386
 GameObject:
   m_ObjectHideFlags: 0
@@ -2824,6 +2839,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 155353065615578699, guid: b83e90d286863fc42adcff3f9ca60e95, type: 3}
+      propertyPath: pauseUI
+      value: 
+      objectReference: {fileID: 238296773}
     - target: {fileID: 155353065615578699, guid: b83e90d286863fc42adcff3f9ca60e95, type: 3}
       propertyPath: scoreText
       value: 
