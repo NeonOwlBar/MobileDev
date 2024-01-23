@@ -18,8 +18,8 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         spawnMax = spawnMax <= spawnMin ? spawnMax : spawnMax - 0.0001f;
+
         timer += Time.deltaTime;
         if (timer > spawnTimer)
         {

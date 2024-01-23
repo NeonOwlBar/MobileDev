@@ -12,6 +12,7 @@ public class PlayerControl : Character
     private Rigidbody2D rb;
     private bool isTouch;
     public bool canMove;
+    public MenuSceneController menuController;
 
     [Header ("Hearts Information")]
     public GameObject[] hearts;
@@ -36,7 +37,8 @@ public class PlayerControl : Character
     private float gyroSensitivity = 0.05f;
 
     [Header ("UI Game Objects")]
-    public GameObject gameActiveUI;
+    public GameObject gameActiveUIObject;
+    public GameUI gameActiveUI;
     public GameObject pauseUI;
     public GameObject gameOverUI;
     public GameObject highScoreText;
@@ -45,6 +47,9 @@ public class PlayerControl : Character
     public CinemachineVirtualCamera virtualCam;
     public float camShakeIntensity = 1.0f;
     private CinemachineBasicMultiChannelPerlin perlinNoise;
+
+    [Header("Power Ups")]
+    public GameObject healthPrefab;
 
     public enum MoveType
     {
@@ -57,7 +62,9 @@ public class PlayerControl : Character
     {
         rb = GetComponent<Rigidbody2D>();
 
-        gameActiveUI.SetActive(true);
+        //gameActiveUI.SetActive(true);
+        gameActiveUIObject.SetActive(true);
+        gameActiveUI = gameActiveUIObject.GetComponent<GameUI>();
         pauseUI.SetActive(true);
         gameOverUI.SetActive(false);
 
@@ -119,10 +126,26 @@ public class PlayerControl : Character
         scoreToText = (int)(score / 100);
         // Displayed as part of UI
         scoreText.text = scoreToText.ToString();
+
+        // if score is a multiple of 100
+        if (scoreToText % 100 == 0)
+        {
+            // create spawn point
+            Vector3 randomPos = new Vector3(Random.Range(-1.75f, 1.75f), 7.0f, 0.0f);
+            // instantiate heart at spawn point
+            Instantiate(healthPrefab, randomPos, Quaternion.identity);
+
+            // if score is below 4000
+            if (scoreToText < 4000)
+                // increase parallax speed
+                Parallax.IncreaseSpeedMulti(0.02f);
+        }
     }
 
     void GameOver()
     {
+        menuController.GameOver();
+
         //WorldStates.GameOver();
         // removes player object from game scene
         gameObject.SetActive(false);
@@ -131,7 +154,7 @@ public class PlayerControl : Character
         scoreEndText.text = scoreToText.ToString();
 
         gameOverUI.SetActive(true);
-        gameActiveUI.SetActive(false);
+        gameActiveUI.Deactivate();
         pauseUI.SetActive(false);
 
         // In case movement type was changed during gameplay in editor
@@ -153,7 +176,7 @@ public class PlayerControl : Character
 
     public void GameRestart()
     {
-        SceneManager.LoadScene("MainMenu");
+        //SceneManager.LoadScene("MainMenu");
         Time.timeScale = 1;
     }
 

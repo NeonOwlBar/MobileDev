@@ -5,7 +5,7 @@ using UnityEngine;
 public class Character : MonoBehaviour
 {
     [Header ("Character Values")]
-    public int speed;
+    public float speed;
     public int health;
     public int maxHealth;
 

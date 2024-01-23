@@ -4,9 +4,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.Advertisements;
 
 public class MenuSceneController : MonoBehaviour
 {
+    public InterstitialAd interstitialAd;
+
     // value for change in text alpha
     static float deltaAlpha = 0.0f;
 
@@ -36,6 +39,7 @@ public class MenuSceneController : MonoBehaviour
 
     public void GameOver()
     {
+        interstitialAd.LoadAd();
         //TextFade(tapToRestart);
     }
 }
