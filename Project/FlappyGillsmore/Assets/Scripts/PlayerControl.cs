@@ -13,6 +13,7 @@ public class PlayerControl : Character
     private bool isTouch;
     public bool canMove;
     public MenuSceneController menuController;
+    float screenBoundOffset;
 
     [Header ("Hearts Information")]
     public GameObject[] hearts;
@@ -34,7 +35,7 @@ public class PlayerControl : Character
 
     [Header ("Menu Controller")]
     private int movementTypeNum;
-    private float gyroSensitivity = 0.05f;
+    private float gyroSensitivity = 0.1f;
 
     [Header ("UI Game Objects")]
     public GameObject gameActiveUIObject;
@@ -50,6 +51,14 @@ public class PlayerControl : Character
 
     [Header("Power Ups")]
     public GameObject healthPrefab;
+
+    [Header("Screen Bounds")]
+    public static Rect safeArea;
+    public float minX;
+    public float maxX;
+
+    [Header("Ads")]
+    public InterstitialAd intAd;
 
     public enum MoveType
     {
@@ -73,6 +82,16 @@ public class PlayerControl : Character
         numHearts = hearts.Length;
         scoreText.text = "0";
 
+        SetSafeArea();
+        screenBoundOffset = (GetComponent<BoxCollider2D>().size.x) * 0.3f;
+
+        //Debug.Log("Safe Area X = " + safeArea.x);
+        //Debug.Log("Safe Area width  = " + safeArea.width);
+        Debug.Log("Minimum x coordinate: " + minX);
+        Debug.Log("Maximum x coordinate: " + maxX);
+        minX += screenBoundOffset;
+        maxX -= screenBoundOffset;
+
         movementTypeNum = PlayerPrefs.GetInt("MovementControls");
         movementType = (MoveType)movementTypeNum;
         Debug.Log("Movement Type Number: " + movementTypeNum);
@@ -86,6 +105,8 @@ public class PlayerControl : Character
         ResetInvincibility();
         ResetPlayerColour();
         ResetShakeIntensity();
+
+        intAd.LoadAd();
     }
 
     // Update is called once per frame
@@ -98,15 +119,15 @@ public class PlayerControl : Character
         switch (movementType)
         {
             case MoveType.touch:
-                //TouchMovement();
-                TouchMovement(isTouch);
+                TouchMovement();
+                //TouchMovement(isTouch);
                 break;
             case MoveType.gyro:
                 GyroMovement(); 
                 break;
             default:
-                //TouchMovement();
-                TouchMovement(isTouch);
+                TouchMovement();
+                //TouchMovement(isTouch);
                 break;
         }
 
@@ -176,7 +197,7 @@ public class PlayerControl : Character
 
     public void GameRestart()
     {
-        //SceneManager.LoadScene("MainMenu");
+        SceneManager.LoadScene("MainMenu");
         Time.timeScale = 1;
     }
 
@@ -189,23 +210,25 @@ public class PlayerControl : Character
     //    isTouch = false;
     //}
 
-    //void TouchMovement()
-    void TouchMovement(bool input)
+    //void TouchMovement(bool input)
+    void TouchMovement()
     {
         // stores x position from previous frame
         float oldPosX = transform.position.x;
         // true if touch input currently detected, false if not
-        //bool isTouch = Input.touchCount > 0;
+        bool isTouch = Input.touchCount > 0;
         // if touch: move right, else move left
-        //float movement = (isTouch ? 1 : -1) * speed * Time.deltaTime;
+        float movement = (isTouch ? 1 : -1) * speed * Time.deltaTime;
 
-        float movement = (input ? 1 : -1) * speed * Time.deltaTime;
+        //float movement = (input ? 1 : -1) * speed * Time.deltaTime;
 
         // stores x position after movement
         float newX = oldPosX + movement;
-        
+
         // only applies movement if the new position is within the bounds
-        if (newX > -2.0f && newX < 2.0f)
+        //if (newX > -2.0f && newX < 2.0f)
+        //newX = Mathf.Clamp(newX, minX + screenBoundOffset, maxX - screenBoundOffset);
+        if (newX >= minX && newX <= maxX)
         {
             // new velocity vector
             Vector2 velocity = new Vector2(movement, 0);
@@ -235,7 +258,8 @@ public class PlayerControl : Character
         // stores x position after movement
         float newX = oldPosX + movement;
         // only applies movement if the new position is within the bounds
-        if (newX > -2.0f && newX < 2.0f)
+        //if (newX > -2.0f && newX < 2.0f)
+        if (newX >= minX && newX <= maxX)
             transform.Translate(movement, 0, 0);
     }
 
@@ -312,5 +336,17 @@ public class PlayerControl : Character
     private void ResetShakeIntensity()
     {
         perlinNoise.m_AmplitudeGain = 0.0f;
+    }
+
+    public void SetSafeArea()
+    {
+        // stores safe area data in new rect
+        safeArea = Screen.safeArea;
+        Debug.Log("Safe Area X = " + safeArea.x);
+        Debug.Log("Safe Area width  = " + safeArea.width);
+
+        // find where screen edge is in world space
+        minX = Camera.main.ScreenToWorldPoint(new Vector3(safeArea.x, 0, 0)).x;
+        maxX = Camera.main.ScreenToWorldPoint(new Vector3(safeArea.width, 0, 0)).x;
     }
 }

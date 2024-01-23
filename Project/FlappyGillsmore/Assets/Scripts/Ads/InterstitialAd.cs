@@ -13,6 +13,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     [SerializeField] string _androidAdUnitId = "Interstitial_Android";
     [SerializeField] string _iOsAdUnitId = "Interstitial_iOS";
     string _adUnitId;
+    bool isLoaded = false;
 
     void Awake()
     {
@@ -33,15 +34,20 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     // Show the loaded content in the Ad Unit:
     public void ShowAd()
     {
-        // Note that if the ad content wasn't previously loaded, this method will fail
-        Debug.Log("Showing Ad: " + _adUnitId);
-        Advertisement.Show(_adUnitId, this);
+        if (isLoaded)
+        {
+            // Note that if the ad content wasn't previously loaded, this method will fail
+            Debug.Log("Showing Ad: " + _adUnitId);
+            Advertisement.Show(_adUnitId, this);
+        }
     }
 
     // Implement Load Listener and Show Listener interface methods: 
     public void OnUnityAdsAdLoaded(string adUnitId)
     {
         // Optionally execute code if the Ad Unit successfully loads content.
+        Debug.Log("Ad Successfully Loaded: " + _adUnitId);
+        isLoaded = true;
     }
 
     public void OnUnityAdsFailedToLoad(string _adUnitId, UnityAdsLoadError error, string message)
@@ -61,6 +67,6 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     public void OnUnityAdsShowComplete(string _adUnitId, UnityAdsShowCompletionState showCompletionState)
     {
         //WorldStates.isGamePlaying = true;
-        SceneManager.LoadScene("MainMenu");
+        //SceneManager.LoadScene("MainMenu");
     }
 }
