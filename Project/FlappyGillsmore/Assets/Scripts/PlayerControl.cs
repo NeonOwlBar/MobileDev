@@ -60,6 +60,7 @@ public class PlayerControl : Character
     [Header("Ads")]
     public InterstitialAd intAd;
 
+    // types of movement
     public enum MoveType
     {
         touch,
@@ -71,34 +72,39 @@ public class PlayerControl : Character
     {
         rb = GetComponent<Rigidbody2D>();
 
-        //gameActiveUI.SetActive(true);
+        // set various UIs to active or not, depending on their use
         gameActiveUIObject.SetActive(true);
         gameActiveUI = gameActiveUIObject.GetComponent<GameUI>();
         pauseUI.SetActive(true);
         gameOverUI.SetActive(false);
 
         spriteRenderer = GetComponent<SpriteRenderer>();
+        // set max health for player
         SetHealthMax(this);
+        // set number of hearts for UI
         numHearts = hearts.Length;
+        // set the text for score ui to 0
         scoreText.text = "0";
 
+        // assign values to safe area rect
         SetSafeArea();
+        // create an offset for player screenbounds
         screenBoundOffset = (GetComponent<BoxCollider2D>().size.x) * 0.3f;
-
-        //Debug.Log("Safe Area X = " + safeArea.x);
-        //Debug.Log("Safe Area width  = " + safeArea.width);
-        Debug.Log("Minimum x coordinate: " + minX);
-        Debug.Log("Maximum x coordinate: " + maxX);
+        // apply offset to the screenbounds
         minX += screenBoundOffset;
         maxX -= screenBoundOffset;
 
+        // get current movement type
         movementTypeNum = PlayerPrefs.GetInt("MovementControls");
+        // set current movement type
         movementType = (MoveType)movementTypeNum;
         Debug.Log("Movement Type Number: " + movementTypeNum);
 
+        // allow gyro input
         Input.gyro.enabled = true;
         canMove = true;
 
+        // set perlin noise reference
         perlinNoise = virtualCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
 
         // resetting values that could have been changed or not reset in previous sessions
@@ -106,6 +112,7 @@ public class PlayerControl : Character
         ResetPlayerColour();
         ResetShakeIntensity();
 
+        // load an interstitial ad for when game ends
         intAd.LoadAd();
     }
 
@@ -201,16 +208,6 @@ public class PlayerControl : Character
         Time.timeScale = 1;
     }
 
-    //private void SetTouchTrue()
-    //{
-    //    isTouch = true;
-    //}
-    //private void SetTouchFalse()
-    //{
-    //    isTouch = false;
-    //}
-
-    //void TouchMovement(bool input)
     void TouchMovement()
     {
         // stores x position from previous frame
@@ -220,14 +217,10 @@ public class PlayerControl : Character
         // if touch: move right, else move left
         float movement = (isTouch ? 1 : -1) * speed * Time.deltaTime;
 
-        //float movement = (input ? 1 : -1) * speed * Time.deltaTime;
-
         // stores x position after movement
         float newX = oldPosX + movement;
 
         // only applies movement if the new position is within the bounds
-        //if (newX > -2.0f && newX < 2.0f)
-        //newX = Mathf.Clamp(newX, minX + screenBoundOffset, maxX - screenBoundOffset);
         if (newX >= minX && newX <= maxX)
         {
             // new velocity vector
@@ -244,9 +237,6 @@ public class PlayerControl : Character
             // movement would put player beyond screen bound, so don't apply movement
             rb.velocity = Vector2.zero;
         }
-        
-        //if (newX > safeArea.x && newX < safeArea.width)
-        //    transform.Translate(movement, 0, 0);
     }
 
     private void GyroMovement()
@@ -254,7 +244,7 @@ public class PlayerControl : Character
         // stores x position from previous frame
         float oldPosX = transform.position.x;
         // calculate change in position
-        float movement = Input.acceleration.x * gyroSensitivity;// * Time.deltaTime;
+        float movement = Input.acceleration.x * gyroSensitivity;
         // stores x position after movement
         float newX = oldPosX + movement;
         // only applies movement if the new position is within the bounds
@@ -282,7 +272,7 @@ public class PlayerControl : Character
     void TakeDamage(int _damage)
     {
         // make damage sound
-        AudioManager.Instance.PlayOneShot(damageSound, transform.position);
+        //AudioManager.Instance.PlayOneShot(damageSound, transform.position);
         // reduces health
         health -= _damage;
         // reduces value for number of active hearts in array
@@ -301,6 +291,7 @@ public class PlayerControl : Character
 
     private IEnumerator InvincibilityFrames()
     {
+        // set player to not take damage
         isInvincible = true;
 
         yield return new WaitForSeconds(invincibilityDuration);
@@ -309,32 +300,37 @@ public class PlayerControl : Character
     }
     private void ResetInvincibility()
     {
+        // player can take damage again
         isInvincible = false;
     }
 
     private IEnumerator DamageColour()
     {
+        // add red colour filter to clownfish
         spriteRenderer.color = damageColour;
-
+        // keep this colour for the passed amount of time
         yield return new WaitForSeconds(damageDuration);
 
         ResetPlayerColour();
     }
     private void ResetPlayerColour()
     {
+        //reset colour to normal
         spriteRenderer.color = Color.white;
     }
 
     private IEnumerator CameraShake(float intensity)
     {
+        // set amplitude for screenshake
         perlinNoise.m_AmplitudeGain = intensity;
-
+        // wait for time provided continuing screen shake
         yield return new WaitForSeconds(damageDuration);
-
+        // reset shake
         ResetShakeIntensity();
     }
     private void ResetShakeIntensity()
     {
+        // return amplitude to zero to remove screen shake
         perlinNoise.m_AmplitudeGain = 0.0f;
     }
 

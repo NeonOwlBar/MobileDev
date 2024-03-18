@@ -66,6 +66,7 @@ public class InterstitialAd : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsSho
     public void OnUnityAdsShowClick(string _adUnitId) { }
     public void OnUnityAdsShowComplete(string _adUnitId, UnityAdsShowCompletionState showCompletionState)
     {
+        isLoaded = false;
         //WorldStates.isGamePlaying = true;
         //SceneManager.LoadScene("MainMenu");
     }

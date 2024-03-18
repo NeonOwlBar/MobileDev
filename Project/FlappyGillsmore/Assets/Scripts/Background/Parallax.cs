@@ -4,42 +4,39 @@ using UnityEngine;
 
 public class Parallax : MonoBehaviour
 {
+    // multiplier for ALL layers
     public static float parallaxGroupMulti = 1.0f;
+    // multiplier for individual layer
     public float parallaxLayerMulti;
-    private float length;
+    // rect transform of each layer
     public RectTransform rect;
 
     // Start is called before the first frame update
-    void Start()
-    {
-        //length = GetComponent<SpriteRenderer>().bounds.size.y;
-        Debug.Log("Rect pos y: " + rect.position.y);
-    }
+    //void Start()
+    //{
+    //    Debug.Log("Rect pos y: " + rect.position.y);
+    //}
 
     // Update is called once per frame
     void Update()
     {
-        //float newY = transform.position.y - 1.0f * parallaxLayerMulti * parallaxGroupMulti * Time.deltaTime;
-        //transform.position = new Vector3(transform.position.x, newY, transform.position.z);
-
-        //if (transform.position.y < -length)
-        //{
-        //    transform.position = new Vector3(transform.position.x, length * 0.98f, transform.position.z);
-        //}
-
-        //float newY = rect.position.y - (1.0f * parallaxLayerMulti * parallaxGroupMulti * Time.deltaTime);
+        // calculate new y position for layer
         float newY = rect.anchoredPosition.y - (100.0f * parallaxLayerMulti * parallaxGroupMulti * Time.deltaTime);
-        //rect.position = new Vector3(rect.position.x, newY, rect.position.z);
+        // set new position
         rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, newY);
 
+        // if moved one image height down
         if (rect.anchoredPosition.y < -2092)
         {
+            // return to original position
+            // allows for smooth movement
             rect.position = new Vector3(rect.position.x, 0.0f, rect.position.z);
         }
     }
 
     public static void IncreaseSpeedMulti(float delta)
     {
+        // increase speed of all layers
         parallaxGroupMulti += delta;
     }
 }

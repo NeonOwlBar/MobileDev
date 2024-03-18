@@ -8,6 +8,10 @@ using UnityEngine.Advertisements;
 // Within the code below, comments included in the unity docs begin with a capital letter. Any comments by the developer begin with a lowercase letter
 // Some features from the original file have been removed as they were not needed
 
+// commented out so it cannot be used in published versions due to app-ads.txt not being implemented. Code is here as evidence
+// Working version of game with example banner ads will be available in the video provided with the submission
+
+
 public class BannerAds : MonoBehaviour
 {
     // For the purpose of this example, these buttons are for functionality testing:
@@ -21,6 +25,8 @@ public class BannerAds : MonoBehaviour
     [SerializeField] string _androidAdUnitId = "Banner_Android";
     [SerializeField] string _iOSAdUnitId = "Banner_iOS";
     string _adUnitId = null; // This will remain null for unsupported platforms.
+
+    public static bool isBannerOn = false;
 
     void Start()
     {
@@ -37,6 +43,8 @@ public class BannerAds : MonoBehaviour
 
         // Set the banner position:
         Advertisement.Banner.SetPosition(_bannerPosition);
+
+        isBannerOn = true;
 
         //// Configure the Load Banner button to call the LoadBanner() method when clicked:
         //_loadBannerButton.onClick.AddListener(LoadBanner);

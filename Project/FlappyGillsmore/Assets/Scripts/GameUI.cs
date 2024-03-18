@@ -49,7 +49,7 @@ public class GameUI : MonoBehaviour
             // update ad status
             isAdShowing = true;
             //reset timer
-            timer = 0.0f;        
+            timer = 0.0f;
         }
         // if add needs to be removed
         else if (isAdShowing && timer >= adOnDuration)

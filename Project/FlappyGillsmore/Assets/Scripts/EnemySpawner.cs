@@ -33,6 +33,8 @@ public class EnemySpawner : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // if the max spawn time is less than or equal to the min spawn time, leave it as it is,
+        // otherwise, reduce it by 0.0001f
         spawnMax = spawnMax <= spawnMin ? spawnMax : spawnMax - 0.0001f;
 
         timer += Time.deltaTime;
@@ -46,6 +48,7 @@ public class EnemySpawner : MonoBehaviour
             WorldStates.enemies.Add(newEnemy.GetComponent<EnemyBehaviour>());
             // reset timer
             timer = 0;
+            // set next spawn time
             spawnTimer = Random.Range(spawnMin, spawnMax);
         }
     }
